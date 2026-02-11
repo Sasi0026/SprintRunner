@@ -17,7 +17,7 @@ class Task:
         return True
     
     def to_dict(self):
-        """ generate docstring (We only need the dictionary temporarily (to save to file) )"""
+        """Convert the Task object into a dictionary representation."""
         return {
             'name':self.name, 
             'total_duration_minutes':self.total_duration_minutes, 
