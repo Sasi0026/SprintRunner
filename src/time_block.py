@@ -25,3 +25,4 @@ class BreakBlock(TimeBlock):
         super().__init__(duration_seconds, 'break')
         self.alarm_tone = 'break_alarm.mp3'
     
+

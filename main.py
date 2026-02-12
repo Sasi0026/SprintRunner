@@ -1,6 +1,9 @@
 from src.task import Task
-
 from src.schedule import Schedule
+from src.timer import Timer
+
+import time 
+
 
 def main():
     print('Sprint Runner Started')
@@ -18,22 +21,21 @@ def main():
     else:
         print("Invalid task settings!")
 
-    # Test loading from dict
-    task_dict = task.to_dict()
-    print(f"\nTask as dictionary: {task_dict}")
 
-    loaded_task = Task.from_dict(task_dict)
-    print(f"\nLoaded task: {loaded_task}")
-
-
-    # Test Schedule
+    # Create schedule and timer
     schedule = Schedule(task)
     print(f'\nTotal blocks Created : {len(schedule.blocks)}')
 
-    for i in range(min(3, len(schedule.blocks))):
-        block = schedule.get_next_block()
-        print(block)
+    print(f"Blocks in schedule: {len(schedule.blocks)}")
+    
+    # Create timer 
+    timer = Timer(schedule)
+    timer.start()
 
+    # Run Timer
+    while timer.is_running:
+        time.tick()
+        time.sleep(1)
 
 
 
