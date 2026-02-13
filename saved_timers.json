@@ -1,0 +1,20 @@
+{
+  "test": {
+    "name": "test",
+    "total_duration_minutes": 1,
+    "work_block_minutes": 1,
+    "break_block_seconds": 0
+  },
+  "10": {
+    "name": "10",
+    "total_duration_minutes": 2,
+    "work_block_minutes": 1,
+    "break_block_seconds": 10
+  },
+  "Test ": {
+    "name": "Test ",
+    "total_duration_minutes": 1,
+    "work_block_minutes": 1,
+    "break_block_seconds": 1
+  }
+}

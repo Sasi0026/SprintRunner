@@ -1,6 +1,7 @@
 from src.task import Task
 from src.schedule import Schedule
 from src.timer import Timer
+from src.timer_repository import TimerRepository
 
 import time 
 
@@ -27,6 +28,16 @@ def main():
     print(f'\nTotal blocks Created : {len(schedule.blocks)}')
 
     print(f"Blocks in schedule: {len(schedule.blocks)}")
+
+    # Test saving
+    repo = TimerRepository()
+
+    save_choice = input("\nSave this timer for later? (y/n): ")
+    if save_choice.lower() == 'y':
+        repo.save_timer(task)
+
+    # Show all saved timers
+    repo.list_timers()
     
     # Create timer 
     timer = Timer(schedule)
@@ -34,8 +45,10 @@ def main():
 
     # Run Timer
     while timer.is_running:
-        time.tick()
+        timer.tick()
         time.sleep(1)
+
+
 
 
 

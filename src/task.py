@@ -14,6 +14,8 @@ class Task:
             return False
         if self.break_block_seconds < 0:
             return False
+        if self.work_block_minutes > self.total_duration_minutes:
+            return False
         return True
     
     def to_dict(self):

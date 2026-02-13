@@ -15,6 +15,13 @@ class Schedule:
         cycle_duration = work_seconds + break_seconds
         num_cycles = int(total_seconds / cycle_duration)
 
+        # If no complete cycles, fit as many work blocks as possible
+        if num_cycles == 0:
+            num_work_blocks = int(total_seconds / work_seconds)
+            for i in range(num_work_blocks):
+                self.blocks.append(WorkBlock(work_seconds))
+            return
+
         for i in range(num_cycles):
             self.blocks.append(WorkBlock(work_seconds))
 
