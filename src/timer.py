@@ -2,12 +2,13 @@ from src.schedule import Schedule
 
 class Timer:
 
-    def __init__(self,schedule):
+    def __init__(self, schedule):
         self.schedule = schedule
         self.current_block = None
         self.remaining_seconds = None
         self.is_running = False
         self.is_paused = False
+        self.on_block_complete_callback = None  # ADD THIS
 
     def start(self):
         """
@@ -39,23 +40,20 @@ class Timer:
             self.on_block_complete()
 
     def on_block_complete(self):
-        """
-        Called when current block finishes.
+        """Called when current block finishes"""
+        alarm_tone = self.current_block.alarm_tone
         
-        Plays alarm, gets next block, or stops if no blocks left.
-        """
-        print(f"Block finished! Alarm: {self.current_block.alarm_tone}")
-
-        # Get next block 
+        # Notify GUI if callback exists
+        if self.on_block_complete_callback:
+            self.on_block_complete_callback(alarm_tone)  # ADD THIS
+        
+        # Get next block
         self.current_block = self.schedule.get_next_block()
-
+        
         if self.current_block is None:
             self.stop()
-        else: # start next block
+        else:
             self.remaining_seconds = self.current_block.duration_seconds
-            print(f"\nStarted {self.current_block.block_type.capitalize()} Block - {self.remaining_seconds}s")
-
-
 
     def pause(self):
         """Pause the timer. Can be resumed later."""

@@ -2,7 +2,7 @@ from src.task import Task
 from src.schedule import Schedule
 from src.timer import Timer
 from src.timer_repository import TimerRepository
-
+import pygame
 import time 
 
 
@@ -38,6 +38,9 @@ def main():
 
     # Show all saved timers
     repo.list_timers()
+
+    print(f"DEBUG: Blocks before timer: {len(schedule.blocks)}")
+    print(f"DEBUG: First block: {schedule.blocks[0] if schedule.blocks else 'NONE'}")
     
     # Create timer 
     timer = Timer(schedule)
@@ -50,7 +53,13 @@ def main():
 
 
 
+    print('Try to play ringtone')
+    pygame.mixer.init()
+    pygame.mixer.music.load('assets/diagon_alley.mp3')
+    pygame.mixer.music.play()
 
+    
+    time.sleep(3)  # Wait for sound to play
 
 if __name__ == "__main__":
     main()
