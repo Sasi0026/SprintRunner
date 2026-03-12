@@ -33,10 +33,11 @@ class Timer:
         if not self.is_running or self.is_paused :
             return
         
-        self.remaining_seconds -= 1
+        if self.remaining_seconds > 0:
+            self.remaining_seconds -= 1
         print(f"Time Remaining : {self.remaining_seconds}s")
 
-        if self.remaining_seconds == 0:
+        if self.remaining_seconds <= 0:
             self.on_block_complete()
 
     def on_block_complete(self):

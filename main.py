@@ -53,13 +53,9 @@ def main():
 
 
 
-    print('Try to play ringtone')
-    pygame.mixer.init()
-    pygame.mixer.music.load('assets/diagon_alley.mp3')
-    pygame.mixer.music.play()
+    
 
     
-    time.sleep(3)  # Wait for sound to play
 
 if __name__ == "__main__":
     main()

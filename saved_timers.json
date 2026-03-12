@@ -1,34 +1,4 @@
 {
-  "test": {
-    "name": "test",
-    "total_duration_minutes": 2,
-    "work_block_minutes": 1,
-    "break_block_seconds": 15
-  },
-  "10": {
-    "name": "10",
-    "total_duration_minutes": 2,
-    "work_block_minutes": 1,
-    "break_block_seconds": 10
-  },
-  "Test ": {
-    "name": "Test ",
-    "total_duration_minutes": 1,
-    "work_block_minutes": 1,
-    "break_block_seconds": 1
-  },
-  "Test": {
-    "name": "Test",
-    "total_duration_minutes": 2,
-    "work_block_minutes": 1,
-    "break_block_seconds": 15
-  },
-  "Hacker": {
-    "name": "Hacker",
-    "total_duration_minutes": 60,
-    "work_block_minutes": 5,
-    "break_block_seconds": 15
-  },
   "Test hacker": {
     "name": "Test hacker",
     "total_duration_minutes": 60,
@@ -47,10 +17,10 @@
     "work_block_minutes": 1,
     "break_block_seconds": 0
   },
-  "exam": {
-    "name": "exam",
+  "New Task": {
+    "name": "New Task",
     "total_duration_minutes": 10,
     "work_block_minutes": 1,
-    "break_block_seconds": 0
+    "break_block_seconds": 10
   }
 }
