@@ -1,7 +1,7 @@
 class Task:
     """Represents a timer task configuration"""
 
-    def __init__(self, name, total_duration_minutes, work_block_minutes, break_block_seconds):
+    def __init__(self, name, total_duration_minutes, work_block_minutes, break_block_seconds=10):
         self.name = name
         self.total_duration_minutes = total_duration_minutes
         self.work_block_minutes = work_block_minutes
