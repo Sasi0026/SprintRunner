@@ -17,6 +17,14 @@ class SprintRunnerApp(App):
 
         return sm
     
+    def on_pause(self):
+        """Allow app to run in background"""
+        return True
+    
+    def on_resume(self):
+        """App resumed from background"""
+        pass
+    
     
 
 

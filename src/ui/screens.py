@@ -289,6 +289,21 @@ class TimerScreen(Screen):
         layout.add_widget(btn_container)
         self.add_widget(layout)
 
+        # Initialize wake lock to prevent Android from killing timer in background
+
+        try:
+            from android import mActivity
+            from jnius import autoclass
+            PowerManager = autoclass('android.os.PowerManager')
+            power_manager = mActivity.getSystemService('power')
+            self.wake_lock = power_manager.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK,
+                'SprintRunner::TimerWakeLock'
+            )
+        except:
+            self.wake_lock = None
+
+
     def on_start(self, instance):
         """Start or resume the timer countdown"""
         from src.timer import Timer
@@ -315,6 +330,10 @@ class TimerScreen(Screen):
             # Update buttons
             self.start_btn.disabled = True
             self.pause_btn.disabled = False
+
+            #  Acquire wake lock to keep timer running in background
+            if self.wake_lock:
+                self.wake_lock.acquire()
         else:
             # Resume from pause
             self.timer.resume()
@@ -341,6 +360,14 @@ class TimerScreen(Screen):
         self.start_btn.disabled = False
         self.pause_btn.disabled = True
         self.pause_btn.text = 'Pause'
+
+        # Release wake lock when timer stops
+        if hasattr(self, 'wake_lock') and self.wake_lock:
+            try:
+                if self.wake_lock.isHeld():
+                    self.wake_lock.release()
+            except:
+                pass
         
         self.manager.current = 'home'
 
