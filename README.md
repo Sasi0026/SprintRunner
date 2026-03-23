@@ -12,7 +12,12 @@ The core engine and UI have been successfully compiled into a standalone Android
 
 ## 📱 Screenshots
 
-*Add your 3 app screenshots here*
+<p align="center">
+  <img src="screenshots/home.jpg" width="250" />
+  <img src="screenshots/create.jpg" width="250" />
+  <img src="screenshots/timer.jpg" width="250" />
+  
+</p>
 
 ## ✨ Features
 
