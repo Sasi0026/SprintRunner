@@ -95,13 +95,33 @@ python main.py
 
 ## 🚀 Roadmap
 
+Sprint Runner is actively developed. Upcoming versions will introduce AI agent features:
+
 ### Planned Features
+
 - [ ] **Background Service** - Timer continues when app is minimized or screen is off
 - [ ] **Enhanced UI** - Display session stats (blocks completed, remaining time)
 - [ ] **Statistics Dashboard** - Track productivity over time
 - [ ] **Notification Support** - Show timer updates in notification bar
 - [ ] **Dark/Light Themes** - Customizable color schemes
 - [ ] **Export/Import** - Share timer configs with others
+- [ ] **Voice Command Support** - Control sprints and timers hands-free using voice input
+
+### 🤖 AI Agent Features
+
+#### AI Scheduling Agent
+- Natural language task input ("Schedule a 2-hour deep work sprint tomorrow morning")
+- Intelligent sprint planning based on task priority and deadlines
+
+#### Timer & Break Agent
+- Adaptive break suggestions based on your work patterns
+- Auto-timer management without manual input
+
+#### Work Organisation Agent
+- Smart task grouping and categorisation
+- Daily/weekly summary reports
+
+> AI agent features are being built using Python-based LLM orchestration (exploring CrewAI, LangChain).
 
 ## 📸 Current Features
 
@@ -134,7 +154,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Sasi0026**
 - GitHub: [@Sasi0026](https://github.com/Sasi0026)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built as a learning project to master OOP in Python
 - Inspired by Pomodoro Technique and focus timer apps
