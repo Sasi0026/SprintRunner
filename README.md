@@ -23,6 +23,7 @@ The core engine and UI have been successfully compiled into a standalone Android
 
 <p align="center">
   <img src="screenshots/home_dark.jpg" width="200" />
+  <img src="screenshots/timer_dark.jpg" width="200" />
   <img src="screenshots/stats_dark.jpg" width="200" />
   <img src="screenshots/settings_dark.jpg" width="200" />
 </p>
@@ -32,12 +33,12 @@ The core engine and UI have been successfully compiled into a standalone Android
 - ✅ **Customizable Time Blocks** - Set your own work duration (e.g., 5 min per coding problem)
 - ✅ **Smart Break System** - Automatic breaks between work blocks (e.g., 10 sec rest)
 - ✅ **Reusable Templates** - Save timer configurations and reuse them daily
-- ✅ **Visual Progress** - Progress ring plus pill bars for completed/active/pending sprints
+- ✅ **Visual Progress** - Progress ring plus a swipeable row of sprint tiles (done, skipped, current, upcoming)
 - ✅ **Ready-made Templates** - Coding, Pomodoro, exam practice, workouts, reading and more
 - ✅ **Stats & Streaks** - Focus time, sprints done, daily streaks and recent sessions
 - ✅ **Light, Dark & System Themes** - Plus five accent colours
 - ✅ **Gentle Chimes + Notifications** - Short original chimes for sprint done, break over and session complete, with an in-app banner, an Android notification and vibration (sound and vibration can be turned off)
-- ✅ **Accurate Background Timing** - Uses the real clock, so it catches up after the app was in the background
+- ✅ **Accurate Timing** - Uses the real clock, so the countdown is correct again as soon as you return to the app
 
 ## 🎯 Use Case Example
 
@@ -73,6 +74,7 @@ The core engine and UI have been successfully compiled into a standalone Android
 - `SessionLog` - Session history, stats and streaks
 - `Settings` - Theme, accent colour, sound and vibration preferences
 - `Theme` - Light/dark colour palettes used by every widget
+- `Alerts` - Chimes and Android notifications when a sprint, break or session ends
 - `HomeScreen`, `ExploreScreen`, `CreateTaskScreen`, `TimerScreen`, `StatsScreen`, `SettingsScreen` - UI screens
 
 ## 📲 Installation
@@ -121,10 +123,11 @@ Sprint Runner is actively developed. Upcoming versions will introduce AI agent f
 
 ### Planned Features
 
-- [ ] **Background Service** - Timer continues when app is minimized or screen is off
+- [ ] **Background Service** - Timer and chimes keep running when the app is minimized or the screen is off
 - [x] **Enhanced UI** - Display session stats (blocks completed, remaining time)
 - [x] **Statistics Dashboard** - Track productivity over time
-- [ ] **Notification Support** - Show timer updates in notification bar
+- [x] **Block-complete Notifications** - Chime, banner and Android notification when a sprint, break or session ends
+- [ ] **Live Notification** - Countdown shown in the notification bar
 - [x] **Dark/Light Themes** - Customizable color schemes
 - [ ] **Export/Import** - Share timer configs with others
 - [ ] **Voice Command Support** - Control sprints and timers hands-free using voice input
@@ -161,13 +164,16 @@ Sprint Runner is actively developed. Upcoming versions will introduce AI agent f
 - Live preview of how many sprints fit, with clear error messages
 
 **Timer:**
-- Progress ring and big countdown, sprint counter, pill progress bar
-  (green = done, accent = current, grey = pending)
+- Progress ring and big countdown with the current phase (Sprint 4 of 11 / Break)
+- Sprints card: numbered tiles that scroll to the current sprint
+  (green ✓ = done, orange = skipped, accent with progress bar = current, grey = upcoming)
+- When a block ends: a short chime, a notification banner ("Sprint 3 of 11 done · Take a 10s break"),
+  vibration and an Android notification; a separate chime and dialog when the whole session is complete
 - Play/Pause, Skip and Stop (asks before ending; progress is still saved)
 
 **Stats:** focus time, sprints done, sessions finished and streaks for today / this week / all time, plus recent sessions
 
-**Settings:** Light / Dark / System theme, accent colour, alarm sound and vibration
+**Settings:** Light / Dark / System theme, accent colour, chime sound and vibration on/off
 
 ## 🤝 Contributing
 
