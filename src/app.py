@@ -19,7 +19,7 @@ KV_FILE = os.path.join(os.path.dirname(__file__), 'ui', 'sprintrunner.kv')
 class SprintRunnerApp(App):
     title = 'SprintRunner'
     theme = ObjectProperty(None)
-    version_name = StringProperty('v0.2')
+    version_name = StringProperty('v2.0')
 
     def build(self):
         data_dir = self.user_data_dir
