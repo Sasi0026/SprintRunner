@@ -15,7 +15,7 @@ class WorkBlock(TimeBlock):
     def __init__(self, duration_seconds):
 
         super().__init__(duration_seconds, 'work')
-        self.alarm_tone = 'assets/harry_potter_hedwigs.mp3'
+        self.alarm_tone = 'sprint_done'  # assets/sounds/sprint_done.wav
 
 class BreakBlock(TimeBlock):
     """Represents a break interval"""
@@ -23,6 +23,6 @@ class BreakBlock(TimeBlock):
     def __init__(self, duration_seconds):
 
         super().__init__(duration_seconds, 'break')
-        self.alarm_tone = 'assets/diagon_alley.mp3'
+        self.alarm_tone = 'break_done'  # assets/sounds/break_done.wav
     
 

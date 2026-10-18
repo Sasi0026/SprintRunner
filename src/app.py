@@ -10,6 +10,7 @@ from kivy.utils import platform
 from src.settings import Settings
 from src.stats import SessionLog
 from src.timer_repository import TimerRepository
+from src.ui.alerts import Alerts
 from src.ui.theme import Theme
 
 KV_FILE = os.path.join(os.path.dirname(__file__), 'ui', 'sprintrunner.kv')
@@ -26,6 +27,7 @@ class SprintRunnerApp(App):
         self.prefs = Settings(os.path.join(data_dir, 'settings.json'))
         self.repo = TimerRepository(os.path.join(data_dir, 'saved_timers.json'))
         self.sessions = SessionLog(os.path.join(data_dir, 'sessions.json'))
+        self.alerts = Alerts()
 
         self.theme = Theme()
         self.theme.bind(bg=self._paint_system_bars)

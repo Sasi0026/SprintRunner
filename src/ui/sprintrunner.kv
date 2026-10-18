@@ -568,6 +568,39 @@
         size_hint_x: None
         width: self.texture_size[0]
 
+<SprintTile>:
+    size_hint: None, None
+    size: dp(56), dp(64)
+    markup: True
+    bold: True
+    font_size: '19sp'
+    text: self.label_markup(self.state, self.number)
+    color:
+        {'done': (1, 1, 1, 1), 'current': app.theme.primary_text, 'skipped': app.theme.warning, \
+        'pending': app.theme.text_muted}[self.state]
+    canvas.before:
+        Color:
+            rgba:
+                {'done': app.theme.success, 'current': app.theme.primary, \
+                'skipped': app.theme.warning_soft, 'pending': app.theme.surface_alt}[self.state]
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(16)]
+        # Progress of the running sprint, drawn inside the current tile
+        Color:
+            rgba: (1, 1, 1, 0.3) if self.state == 'current' else (0, 0, 0, 0)
+        RoundedRectangle:
+            pos: self.x + dp(10), self.y + dp(9)
+            size: self.width - dp(20), dp(4)
+            radius: [dp(2)]
+        Color:
+            rgba: (1, 1, 1, 1) if self.state == 'current' else (0, 0, 0, 0)
+        RoundedRectangle:
+            pos: self.x + dp(10), self.y + dp(9)
+            size: max(dp(4), (self.width - dp(20)) * self.fill), dp(4)
+            radius: [dp(2)]
+
 <SettingRow>:
     size_hint_y: None
     height: dp(58)
@@ -898,20 +931,36 @@
                     height: dp(24)
         Widget:
             size_hint_y: 0.12
-        Text:
-            text: root.progress_text
-            tone: 'muted'
-            halign: 'center'
-            font_size: '14sp'
-        GridLayout:
-            id: pills
-            cols: 10
-            spacing: dp(6)
-            padding: dp(20), dp(4)
+        Card:
+            orientation: 'vertical'
             size_hint_y: None
-            height: self.minimum_height
-            row_default_height: dp(10)
-            row_force_default: True
+            height: dp(132)
+            radius: dp(22)
+            padding: dp(16), dp(14), dp(16), dp(16)
+            spacing: dp(12)
+            BoxLayout:
+                size_hint_y: None
+                height: dp(22)
+                Text:
+                    text: 'Sprints'
+                    bold: True
+                    font_size: '16sp'
+                Label:
+                    text: root.progress_text
+                    font_size: '14sp'
+                    bold: True
+                    color: app.theme.text_muted
+                    size_hint_x: None
+                    width: self.texture_size[0]
+            ScrollView:
+                id: tile_scroll
+                do_scroll_y: False
+                bar_width: 0
+                BoxLayout:
+                    id: tiles
+                    size_hint_x: None
+                    width: self.minimum_width
+                    spacing: dp(10)
         Widget:
         BoxLayout:
             size_hint: None, None
@@ -938,6 +987,47 @@
                 disabled: not root.started
                 opacity: 1 if root.started else 0.4
                 on_release: root.skip()
+    # Notification banner: slides down from the top when a block ends
+    Card:
+        size_hint: None, None
+        width: root.width - dp(28)
+        height: dp(76)
+        x: dp(14)
+        y: root.height - dp(12) - self.height + (1 - root.banner_shown) * dp(120)
+        opacity: min(1, root.banner_shown * 1.5)
+        radius: dp(22)
+        padding: dp(14), dp(12)
+        spacing: dp(14)
+        Icon:
+            icon: root.banner_icon
+            color: root.banner_color
+            font_size: '26sp'
+            size_hint: None, None
+            size: dp(50), dp(50)
+            pos_hint: {'center_y': 0.5}
+            canvas.before:
+                Color:
+                    rgba: root.banner_color[:3] + [0.15]
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(16)]
+        BoxLayout:
+            orientation: 'vertical'
+            Widget:
+            Text:
+                text: root.banner_title
+                bold: True
+                font_size: '16sp'
+                shorten: True
+                max_lines: 1
+            Text:
+                text: root.banner_text
+                tone: 'muted'
+                font_size: '14sp'
+                shorten: True
+                max_lines: 1
+            Widget:
 
 <ExploreScreen>:
     BoxLayout:

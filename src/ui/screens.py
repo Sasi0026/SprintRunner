@@ -1,14 +1,15 @@
-import math
 from datetime import datetime
 
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.core.audio import SoundLoader
+from kivy.animation import Animation
 from kivy.graphics import Color, RoundedRectangle
 from kivy.metrics import dp
-from kivy.properties import (BooleanProperty, ColorProperty, NumericProperty, StringProperty)
+from kivy.properties import (BooleanProperty, ColorProperty, NumericProperty, OptionProperty,
+                             StringProperty)
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
 from kivy.uix.screenmanager import FadeTransition, Screen
 from kivy.uix.widget import Widget
 
@@ -17,7 +18,7 @@ from src.stats import format_duration
 from src.task import Task
 from src.templates import TEMPLATES
 from src.timer import Timer
-from src.ui.icons import ICONS
+from src.ui.icons import ICONS, icon_markup
 from src.ui.widgets import Card, Chip, Dialog, Icon, PressableCard, Text
 
 
@@ -92,6 +93,21 @@ class SprintCard(PressableCard):
 
     def on_delete(self):
         pass
+
+
+class SprintTile(Label):
+    """One numbered tile in the timer screen's Sprints card."""
+    number = NumericProperty(1)
+    state = OptionProperty('pending', options=['pending', 'current', 'done', 'skipped'])
+    fill = NumericProperty(0)  # how much of the current sprint is done, 0..1
+
+    @staticmethod
+    def label_markup(state, number):
+        if state == 'done':
+            return icon_markup('check', '24sp')
+        if state == 'skipped':
+            return icon_markup('skip-next', '24sp')
+        return str(int(number))
 
 
 class StatCard(Card):
@@ -322,8 +338,12 @@ class TimerScreen(Screen):
     progress_text = StringProperty('')
     running = BooleanProperty(False)
     started = BooleanProperty(False)
-
-    MAX_PILLS = 60
+    # Notification banner shown when a block ends
+    banner_title = StringProperty('')
+    banner_text = StringProperty('')
+    banner_icon = StringProperty('check-circle')
+    banner_color = ColorProperty([0, 0, 0, 1])
+    banner_shown = NumericProperty(0)  # 0 hidden .. 1 visible, animated
 
     def __init__(self, **kwargs):
         super().__init__(name='timer', **kwargs)
@@ -331,10 +351,13 @@ class TimerScreen(Screen):
         self.task = None
         self.schedule = None
         self.clock_event = None
-        self.pill_widgets = []
+        self.tiles = []
+        self.sprint_states = []  # 'done' / 'skipped' per finished sprint
+        self.scrolled_to = None
         self.total_sprints = 0
         self.work_index = 0
         self.pending_alarm = None
+        self._banner_hide = None
         self.wake_lock = self._create_wake_lock()
 
     # -- setup
@@ -352,6 +375,8 @@ class TimerScreen(Screen):
         self.started = False
         self.work_index = 0
         self.pending_alarm = None
+        Animation.cancel_all(self, 'banner_shown')
+        self.banner_shown = 0
         self.total_sprints = self.schedule.work_block_count
 
         self.phase_color = App.get_running_app().theme.primary
@@ -359,33 +384,34 @@ class TimerScreen(Screen):
         self.progress = 1.0
         self.time_text = self._fmt(task.work_block_minutes * 60)
         self.sub_text = 'Tap play to start'
-        self._build_pills()
+        self._build_tiles()
         self._refresh_progress_text()
 
-    def _build_pills(self):
-        grid = self.ids.pills
-        grid.clear_widgets()
-        self.pill_widgets = []
-        if self.total_sprints > self.MAX_PILLS:
-            return  # too many to draw; the text counter is enough
-        # Spread pills evenly over rows of at most 10 (11 -> 6 + 5, not 10 + 1)
-        rows = max(1, math.ceil(self.total_sprints / 10))
-        grid.cols = max(1, math.ceil(self.total_sprints / rows))
-        pending = App.get_running_app().theme.pending
-        for _ in range(self.total_sprints):
-            pill = pill_widget(pending, dp(5))
-            self.pill_widgets.append(pill)
-            grid.add_widget(pill)
+    def _build_tiles(self):
+        row = self.ids.tiles
+        row.clear_widgets()
+        self.tiles = [SprintTile(number=i + 1) for i in range(self.total_sprints)]
+        for tile in self.tiles:
+            row.add_widget(tile)
+        self.sprint_states = []
+        self.scrolled_to = None
+        self.ids.tile_scroll.scroll_x = 0
 
-    def _paint_pills(self):
-        theme = App.get_running_app().theme
-        for i, pill in enumerate(self.pill_widgets):
-            if i < self.timer.completed_work_blocks:
-                pill.color.rgba = theme.success
-            elif i == self.work_index and self.started and self._in_work():
-                pill.color.rgba = theme.primary
+    def _paint_tiles(self):
+        current = self.work_index if self.started and self._in_work() else None
+        for i, tile in enumerate(self.tiles):
+            if i < len(self.sprint_states):
+                tile.state = self.sprint_states[i]
+            elif i == current:
+                tile.state = 'current'
+                tile.fill = 1 - self.progress
             else:
-                pill.color.rgba = theme.pending
+                tile.state = 'pending'
+        # Keep the active (or next) sprint in view
+        focus = min(self.work_index, len(self.tiles) - 1)
+        if self.tiles and focus != self.scrolled_to:
+            self.scrolled_to = focus
+            self.ids.tile_scroll.scroll_to(self.tiles[focus], padding=dp(70), animate=True)
 
     # -- controls
 
@@ -400,6 +426,7 @@ class TimerScreen(Screen):
             self.running = True
             self.clock_event = Clock.schedule_interval(self.update_timer, 0.25)
             self._acquire_wake_lock()
+            App.get_running_app().alerts.request_permission()
         elif self.timer.is_paused:
             self.timer.resume()
             self.running = True
@@ -414,6 +441,7 @@ class TimerScreen(Screen):
         was_work = self._in_work()
         self.timer.skip()
         if was_work:
+            self.sprint_states.append('skipped')
             self.work_index += 1
         self.update_timer(0)
 
@@ -479,15 +507,16 @@ class TimerScreen(Screen):
             self.phase_text = 'BREAK'
             self.sub_text = 'Paused' if paused else 'Breathe'
         self._refresh_progress_text()
-        self._paint_pills()
+        self._paint_tiles()
 
     def on_timer_block_complete(self, block):
         """Called by timer when block completes"""
         if block.block_type == 'work':
+            self.sprint_states.append('done')
             self.work_index += 1
         # Several blocks can end in one tick after the app was in the
-        # background; only the last alarm is played.
-        self.pending_alarm = block.alarm_tone
+        # background; only the last one is announced.
+        self.pending_alarm = block
 
     def _session_complete(self):
         self._cancel_clock()
@@ -502,7 +531,7 @@ class TimerScreen(Screen):
         self.phase_text = 'DONE'
         self.phase_color = app.theme.success
         self._refresh_progress_text()
-        self._paint_pills()
+        self._paint_tiles()
         Dialog(icon='party-popper', icon_color=app.theme.warning,
                title='Session complete!',
                message=(f"{self.timer.completed_work_blocks} sprints · "
@@ -513,7 +542,7 @@ class TimerScreen(Screen):
 
     def _refresh_progress_text(self):
         done = self.timer.completed_work_blocks if self.timer else 0
-        self.progress_text = f"{done} of {self.total_sprints} sprints done"
+        self.progress_text = f"{done} / {self.total_sprints} done"
 
     def _in_work(self):
         block = self.timer.current_block if self.timer else None
@@ -533,23 +562,54 @@ class TimerScreen(Screen):
     # -- sound, vibration and wake lock
 
     def _play_pending_alarm(self):
+        """Chime, vibrate and notify for the block that just ended"""
         if not self.pending_alarm:
             return
-        alarm, self.pending_alarm = self.pending_alarm, None
+        finished, self.pending_alarm = self.pending_alarm, None
         app = App.get_running_app()
-        if app.prefs.get('sound'):
-            self.play_alarm(alarm)
-        if app.prefs.get('vibrate'):
-            app.vibrate(0.6)
+        theme = app.theme
+        nxt = self.timer.current_block
 
-    def play_alarm(self, alarm_file):
-        """Play alarm sound when block ends"""
-        try:
-            sound = SoundLoader.load(alarm_file)
-            if sound:
-                sound.play()
-        except Exception as e:
-            print(f"Audio error: {e}")
+        if self.timer.is_finished:
+            sound = 'session_done'
+            title = 'Session complete!'
+            text = (f"{self.timer.completed_work_blocks} sprints · "
+                    f"{format_duration(self.timer.focused_seconds)} of focus")
+            icon, color = 'party-popper', theme.warning
+        elif finished.block_type == 'work':
+            sound = finished.alarm_tone
+            title = f"Sprint {self.work_index} of {self.total_sprints} done"
+            if nxt.block_type == 'break':
+                text = f"Take a {format_duration(nxt.duration_seconds)} break"
+                icon = 'coffee'
+            else:
+                text = f"Sprint {self.work_index + 1} starts now"
+                icon = 'lightning-bolt'
+            color = theme.success
+        else:
+            sound = finished.alarm_tone
+            title = 'Break over'
+            text = f"Sprint {self.work_index + 1} of {self.total_sprints} · let's go"
+            icon, color = 'lightning-bolt', theme.primary
+
+        if app.prefs.get('sound'):
+            app.alerts.play(sound)
+        if app.prefs.get('vibrate'):
+            app.vibrate(0.4)
+        app.alerts.notify(f"{title} · {self.task.name}", text)
+        if not self.timer.is_finished:  # the completion dialog covers that case
+            self.show_banner(title, text, icon, color)
+
+    def show_banner(self, title, text, icon, color):
+        """Slide a notification card down from the top for a few seconds"""
+        self.banner_title, self.banner_text = title, text
+        self.banner_icon, self.banner_color = icon, color
+        Animation.cancel_all(self, 'banner_shown')
+        Animation(banner_shown=1, d=0.3, t='out_back').start(self)
+        if self._banner_hide:
+            self._banner_hide.cancel()
+        self._banner_hide = Clock.schedule_once(
+            lambda dt: Animation(banner_shown=0, d=0.25, t='in_quad').start(self), 3.5)
 
     @staticmethod
     def _create_wake_lock():

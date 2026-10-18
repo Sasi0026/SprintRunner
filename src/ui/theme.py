@@ -74,6 +74,7 @@ class Theme(EventDispatcher):
     warning = ColorProperty()
     danger = ColorProperty()
     danger_soft = ColorProperty()
+    warning_soft = ColorProperty()
     shadow = ColorProperty()
     primary = ColorProperty()
     primary_soft = ColorProperty()
@@ -96,6 +97,7 @@ class Theme(EventDispatcher):
         self.primary = hex_color(ACCENTS[accent][1 if dark else 0])
         self.primary_soft = mix(self.primary, self.surface, 0.22 if dark else 0.12)
         self.danger_soft = mix(self.danger, self.surface, 0.22 if dark else 0.12)
+        self.warning_soft = mix(self.warning, self.surface, 0.22 if dark else 0.14)
         self.nav_bg = self.surface
         self.is_dark = dark
 

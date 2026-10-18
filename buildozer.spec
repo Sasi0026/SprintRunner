@@ -13,15 +13,15 @@ package.domain = org.sasi
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,mp3,wav,ttf
+source.include_exts = py,png,jpg,kv,atlas,wav,ttf
 
 # (list) List of inclusions using pattern matching
-source.include_patterns = assets/*.mp3,assets/*.wav,assets/fonts/*.ttf
+source.include_patterns = assets/sounds/*.wav,assets/fonts/*.ttf
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
 
 # (list) List of directory to exclude (let empty to not exclude anything)
-source.exclude_dirs = tests, bin, venv, screenshots, .github
+source.exclude_dirs = tests, tools, bin, venv, .venv, screenshots, .github
 
 # (list) List of exclusions using pattern matching
 # Do not prefix with './'
@@ -96,7 +96,7 @@ fullscreen = 0
 
 # (list) Permissions
 # (See https://python-for-android.readthedocs.io/en/latest/buildoptions/#build-options-1 for all the supported syntaxes and properties)
-android.permissions =INTERNET,VIBRATE,WAKE_LOCK
+android.permissions = INTERNET,VIBRATE,WAKE_LOCK,POST_NOTIFICATIONS
 
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host
