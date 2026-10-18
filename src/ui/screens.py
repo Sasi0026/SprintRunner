@@ -489,9 +489,9 @@ class TimerScreen(Screen):
         num_blocks = len(schedule.blocks)
         self.create_progress_blocks(num_blocks)
 
-    def on_timer_block_complete(self, alarm_tone):
+    def on_timer_block_complete(self, block):
         """Called by timer when block completes"""
-        self.play_alarm(alarm_tone)
+        self.play_alarm(block.alarm_tone)
         self.mark_block_complete(self.current_block_index)
         self.current_block_index += 1
         if self.current_block_index < len(self.blocks):
