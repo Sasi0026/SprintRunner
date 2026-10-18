@@ -1,0 +1,1103 @@
+#:import dp kivy.metrics.dp
+#:import ICON_FONT src.ui.icons.ICON_FONT
+
+
+# ---------------------------------------------------------------- base widgets
+
+<Text>:
+    color:
+        {'default': app.theme.text, 'muted': app.theme.text_muted, 'primary': app.theme.primary, \
+        'inverse': (1, 1, 1, 1), 'danger': app.theme.danger}[self.tone]
+    text_size: self.width, None
+    size_hint_y: None
+    height: self.texture_size[1]
+    halign: 'left'
+    valign: 'middle'
+    markup: True
+    font_size: '15sp'
+
+<Icon>:
+    font_name: ICON_FONT
+    text: self.glyph(self.icon)
+    font_size: '24sp'
+    color: app.theme.text
+
+<Card>:
+    canvas.before:
+        Color:
+            rgba: app.theme.shadow if self.elevation else (0, 0, 0, 0)
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 0, -dp(3)
+            blur_radius: dp(16)
+            spread_radius: -dp(2), -dp(2)
+            border_radius: [self.radius] * 4
+        Color:
+            rgba: self.bg_color if self.bg_color else app.theme.surface
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [self.radius]
+
+<PressableCard>:
+    canvas.after:
+        Color:
+            rgba: (0, 0, 0, 0.05 if self.state == 'down' else 0)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [self.radius]
+
+<AppButton>:
+    markup: True
+    text: self.compose(self.icon, self.label)
+    bold: True
+    font_size: '17sp'
+    size_hint_y: None
+    height: dp(54)
+    color:
+        {'primary': app.theme.primary_text, 'soft': app.theme.primary, 'danger': (1, 1, 1, 1), \
+        'danger_soft': app.theme.danger, 'white': self.accent or app.theme.primary, \
+        'glass': (1, 1, 1, 1), 'ghost': app.theme.text_muted}[self.style]
+    canvas.before:
+        Color:
+            rgba: (app.theme.shadow if self.style in ('primary', 'danger') else (0, 0, 0, 0))
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 0, -dp(4)
+            blur_radius: dp(16)
+            spread_radius: -dp(4), -dp(4)
+            border_radius: [self.radius] * 4
+        Color:
+            rgba:
+                {'primary': app.theme.primary, 'soft': app.theme.primary_soft, \
+                'danger': app.theme.danger, 'danger_soft': app.theme.danger_soft, \
+                'white': (1, 1, 1, 1), 'glass': (1, 1, 1, 0.22), 'ghost': (0, 0, 0, 0)}[self.style]
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [self.radius]
+    canvas.after:
+        Color:
+            rgba: (0, 0, 0, 0.08 if self.state == 'down' else 0)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [self.radius]
+
+<IconButton>:
+    font_name: ICON_FONT
+    text: self.glyph(self.icon)
+    font_size: '24sp'
+    size_hint: None, None
+    size: dp(44), dp(44)
+    color:
+        {'plain': app.theme.text, 'soft': app.theme.primary, 'primary': app.theme.primary_text, \
+        'danger_soft': app.theme.danger}[self.style]
+    canvas.before:
+        Color:
+            rgba:
+                {'plain': (0, 0, 0, 0), 'soft': app.theme.primary_soft, 'primary': app.theme.primary, \
+                'danger_soft': app.theme.danger_soft}[self.style]
+        Ellipse:
+            pos: self.pos
+            size: self.size
+    canvas.after:
+        Color:
+            rgba: (0, 0, 0, 0.08 if self.state == 'down' else 0)
+        Ellipse:
+            pos: self.pos
+            size: self.size
+
+<Chip>:
+    markup: True
+    text: self.compose(self.icon, self.label)
+    font_size: '15sp'
+    size_hint: None, None
+    height: dp(38)
+    width: self.texture_size[0] + dp(32)
+    color: app.theme.primary if self.selected else app.theme.text_muted
+    canvas.before:
+        Color:
+            rgba: app.theme.primary_soft if self.selected else app.theme.surface_alt
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [self.height / 2]
+
+<InfoPill>:
+    markup: True
+    text: self.compose(self.icon, self.label, self.icon_color)
+    font_size: '16sp'
+    bold: True
+    color: app.theme.text
+    size_hint: None, None
+    height: dp(40)
+    width: self.texture_size[0] + dp(30)
+    canvas.before:
+        Color:
+            rgba: app.theme.surface
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [self.height / 2]
+
+<AppTextInput>:
+    multiline: False
+    size_hint_y: None
+    height: dp(52)
+    font_size: '17sp'
+    padding: dp(16), (self.height - self.line_height) / 2
+    background_normal: ''
+    background_active: ''
+    background_color: 0, 0, 0, 0
+    foreground_color: app.theme.text
+    hint_text_color: app.theme.text_muted
+    cursor_color: app.theme.primary
+    selection_color: app.theme.primary[:3] + [0.3]
+    canvas.before:
+        Color:
+            rgba: app.theme.surface_alt
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(14)]
+        Color:
+            rgba: app.theme.primary if self.focus else (0, 0, 0, 0)
+        Line:
+            rounded_rectangle: self.x, self.y, self.width, self.height, dp(14)
+            width: dp(1.3)
+        # TextInput draws its text with the last colour set in canvas.before
+        Color:
+            rgba: self.foreground_color if self.text else self.hint_text_color
+
+<Toggle>:
+    size_hint: None, None
+    size: dp(50), dp(30)
+    canvas:
+        Color:
+            rgba: app.theme.primary if self.active else app.theme.pending
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [self.height / 2]
+        Color:
+            rgba: 1, 1, 1, 1
+        Ellipse:
+            pos: self.x + dp(3) + self.knob_x * (self.width - self.height), self.y + dp(3)
+            size: self.height - dp(6), self.height - dp(6)
+
+<Stepper>:
+    size_hint_y: None
+    height: dp(64)
+    spacing: dp(8)
+    BoxLayout:
+        orientation: 'vertical'
+        Widget:
+        Text:
+            text: root.title
+            bold: True
+            font_size: '16sp'
+        Text:
+            text: root.hint
+            tone: 'muted'
+            font_size: '13sp'
+        Widget:
+    IconButton:
+        icon: 'minus'
+        style: 'soft'
+        size: dp(38), dp(38)
+        font_size: '20sp'
+        pos_hint: {'center_y': 0.5}
+        on_release: root.change(-1)
+    AppTextInput:
+        text: str(int(root.value))
+        input_filter: 'int'
+        halign: 'center'
+        size_hint_x: None
+        width: dp(70)
+        height: dp(44)
+        padding: dp(6), (self.height - self.line_height) / 2
+        pos_hint: {'center_y': 0.5}
+        on_text: root.on_text_input(self.text)
+    IconButton:
+        icon: 'plus'
+        style: 'soft'
+        size: dp(38), dp(38)
+        font_size: '20sp'
+        pos_hint: {'center_y': 0.5}
+        on_release: root.change(1)
+
+<ProgressRing>:
+    canvas:
+        Color:
+            rgba: self.track_color
+        Line:
+            circle: self.center_x, self.center_y, min(self.width, self.height) / 2 - self.thickness
+            width: self.thickness
+        Color:
+            rgba: self.ring_color
+        Line:
+            circle:
+                (self.center_x, self.center_y, min(self.width, self.height) / 2 - self.thickness,
+                0, max(0.001, 360 * self.progress))
+            width: self.thickness
+            cap: 'round' if self.progress > 0.002 else 'none'
+
+<NavItem>:
+    orientation: 'vertical'
+    padding: 0, dp(8), 0, dp(6)
+    Label:
+        font_name: ICON_FONT
+        text: root.glyph(root.icon)
+        font_size: '26sp'
+        color: app.theme.primary if root.selected else app.theme.text_muted
+    Label:
+        text: root.label
+        font_size: '12sp'
+        bold: root.selected
+        size_hint_y: None
+        height: dp(16)
+        color: app.theme.primary if root.selected else app.theme.text_muted
+
+<BottomNav>:
+    size_hint_y: None
+    height: dp(66)
+    canvas.before:
+        Color:
+            rgba: app.theme.shadow
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 0, dp(2)
+            blur_radius: dp(18)
+            border_radius: [dp(22), dp(22), 0, 0]
+        Color:
+            rgba: app.theme.nav_bg
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(22), dp(22), 0, 0]
+
+<Dialog>:
+    size_hint: 0.86, None
+    height: card.minimum_height
+    overlay_color: 0, 0, 0, 0.55
+    background: ''
+    background_color: 0, 0, 0, 0
+    Card:
+        id: card
+        orientation: 'vertical'
+        size_hint_y: None
+        height: self.minimum_height
+        radius: dp(22)
+        padding: dp(24), dp(28), dp(24), dp(22)
+        spacing: dp(14)
+        Icon:
+            icon: root.icon
+            font_size: '44sp'
+            color: root.icon_color or app.theme.primary
+            size_hint_y: None
+            height: dp(52) if root.icon else 0
+            opacity: 1 if root.icon else 0
+        Text:
+            text: root.title
+            halign: 'center'
+            bold: True
+            font_size: '20sp'
+        Text:
+            text: root.message
+            tone: 'muted'
+            halign: 'center'
+            font_size: '16sp'
+            opacity: 1 if root.message else 0
+        Widget:
+            size_hint_y: None
+            height: dp(4)
+        AppButton:
+            label: root.confirm_text
+            style: root.confirm_style
+            on_release: root.confirm()
+        AppButton:
+            label: root.cancel_text
+            style: 'soft'
+            height: dp(54) if root.cancel_text else 0
+            opacity: 1 if root.cancel_text else 0
+            disabled: not root.cancel_text
+            on_release: root.dismiss()
+
+<SectionTitle@Text>:
+    bold: True
+    font_size: '19sp'
+
+<ScreenTitle@Text>:
+    bold: True
+    font_size: '30sp'
+
+
+# ---------------------------------------------------------------- list items
+
+<TemplateCard>:
+    orientation: 'vertical'
+    size_hint: None, None
+    size: dp(172), dp(212)
+    radius: dp(24)
+    padding: dp(16), dp(16), dp(16), dp(14)
+    spacing: dp(2)
+    bg_color: root.color
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 0.13
+        Ellipse:
+            pos: self.right - dp(118), self.y + dp(56)
+            size: dp(104), dp(104)
+    Text:
+        text: root.category
+        tone: 'inverse'
+        font_size: '13sp'
+        opacity: 0.85
+    Text:
+        text: root.title
+        tone: 'inverse'
+        bold: True
+        font_size: '20sp'
+        shorten: True
+        max_lines: 2
+    Text:
+        text: root.subtitle
+        tone: 'inverse'
+        font_size: '12sp'
+        opacity: 0.85
+    Icon:
+        icon: root.icon
+        font_size: '58sp'
+        color: 1, 1, 1, 0.95
+        halign: 'right'
+        text_size: self.size
+        valign: 'middle'
+        padding: dp(8), 0
+    AppButton:
+        label: 'Start'
+        style: 'white'
+        accent: root.color
+        height: dp(44)
+        radius: dp(13)
+        font_size: '16sp'
+        on_release: root.dispatch('on_start')
+
+<ExploreCard>:
+    orientation: 'vertical'
+    size_hint_y: None
+    height: dp(196)
+    radius: dp(24)
+    padding: dp(20), dp(18), dp(20), dp(16)
+    spacing: dp(4)
+    bg_color: root.color
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 0.13
+        Ellipse:
+            pos: self.right - dp(150), self.y + dp(30)
+            size: dp(136), dp(136)
+    Text:
+        text: root.category.upper()
+        tone: 'inverse'
+        font_size: '12sp'
+        bold: True
+        opacity: 0.8
+    BoxLayout:
+        spacing: dp(10)
+        BoxLayout:
+            orientation: 'vertical'
+            spacing: dp(4)
+            Text:
+                text: root.title
+                tone: 'inverse'
+                bold: True
+                font_size: '23sp'
+            Text:
+                text: root.description
+                tone: 'inverse'
+                font_size: '14sp'
+                opacity: 0.92
+            Text:
+                text: root.subtitle
+                tone: 'inverse'
+                font_size: '13sp'
+                bold: True
+                opacity: 0.85
+            Widget:
+        Icon:
+            icon: root.icon
+            font_size: '72sp'
+            color: 1, 1, 1, 0.95
+            size_hint_x: None
+            width: dp(96)
+    BoxLayout:
+        size_hint_y: None
+        height: dp(44)
+        spacing: dp(10)
+        AppButton:
+            label: 'Start'
+            icon: 'play'
+            style: 'white'
+            accent: root.color
+            height: dp(44)
+            radius: dp(13)
+            font_size: '16sp'
+            on_release: root.dispatch('on_start')
+        AppButton:
+            label: 'Saved' if root.saved else 'Save'
+            icon: 'check' if root.saved else 'plus'
+            style: 'glass'
+            height: dp(44)
+            radius: dp(13)
+            font_size: '16sp'
+            disabled: root.saved
+            on_release: root.dispatch('on_save')
+
+<SprintCard>:
+    size_hint_y: None
+    height: dp(78)
+    padding: dp(14), dp(12)
+    spacing: dp(14)
+    radius: dp(18)
+    Label:
+        font_name: ICON_FONT
+        text: root.glyph('timer-outline')
+        font_size: '24sp'
+        color: app.theme.primary
+        size_hint: None, None
+        size: dp(46), dp(46)
+        pos_hint: {'center_y': 0.5}
+        canvas.before:
+            Color:
+                rgba: app.theme.primary_soft
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [dp(14)]
+    BoxLayout:
+        orientation: 'vertical'
+        Widget:
+        Text:
+            text: root.title
+            bold: True
+            font_size: '17sp'
+            shorten: True
+            shorten_from: 'right'
+            max_lines: 1
+        Text:
+            text: root.subtitle
+            tone: 'muted'
+            font_size: '13sp'
+            shorten: True
+            shorten_from: 'right'
+            max_lines: 1
+        Widget:
+    IconButton:
+        icon: 'delete-outline'
+        font_size: '22sp'
+        color: app.theme.text_muted
+        size: dp(40), dp(40)
+        pos_hint: {'center_y': 0.5}
+        on_release: root.dispatch('on_delete')
+    IconButton:
+        icon: 'play'
+        style: 'primary'
+        size: dp(44), dp(44)
+        pos_hint: {'center_y': 0.5}
+        on_release: root.dispatch('on_release')
+
+<StatCard>:
+    orientation: 'vertical'
+    size_hint_y: None
+    height: dp(124)
+    padding: dp(16), dp(14)
+    radius: dp(18)
+    Icon:
+        icon: root.icon
+        color: root.icon_color or app.theme.primary
+        font_size: '28sp'
+        halign: 'left'
+        text_size: self.size
+        size_hint_y: None
+        height: dp(34)
+    Widget:
+    Text:
+        text: root.value
+        bold: True
+        font_size: '26sp'
+    Text:
+        text: root.label
+        tone: 'muted'
+        font_size: '14sp'
+
+<HistoryRow>:
+    size_hint_y: None
+    height: dp(60)
+    spacing: dp(12)
+    Label:
+        font_name: ICON_FONT
+        text: root.glyph('check-circle' if root.finished else 'flag-checkered')
+        font_size: '24sp'
+        color: app.theme.success if root.finished else app.theme.warning
+        size_hint_x: None
+        width: dp(30)
+    BoxLayout:
+        orientation: 'vertical'
+        Widget:
+        Text:
+            text: root.title
+            bold: True
+            font_size: '16sp'
+            shorten: True
+            max_lines: 1
+        Text:
+            text: root.subtitle
+            tone: 'muted'
+            font_size: '13sp'
+        Widget:
+    Label:
+        text: root.value
+        bold: True
+        font_size: '16sp'
+        color: app.theme.text
+        size_hint_x: None
+        width: self.texture_size[0]
+
+<SettingRow>:
+    size_hint_y: None
+    height: dp(58)
+    spacing: dp(14)
+    Label:
+        font_name: ICON_FONT
+        text: root.glyph(root.icon)
+        font_size: '22sp'
+        color: app.theme.primary
+        size_hint: None, None
+        size: dp(38), dp(38)
+        pos_hint: {'center_y': 0.5}
+        canvas.before:
+            Color:
+                rgba: app.theme.primary_soft
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [dp(12)]
+    Text:
+        text: root.title
+        font_size: '16sp'
+        pos_hint: {'center_y': 0.5}
+
+<AccentDot>:
+    size_hint: None, None
+    size: dp(40), dp(40)
+    canvas:
+        Color:
+            rgba: self.color if self.selected else (0, 0, 0, 0)
+        Line:
+            circle: self.center_x, self.center_y, self.width / 2 - dp(1)
+            width: dp(1.6)
+        Color:
+            rgba: self.color
+        Ellipse:
+            pos: self.x + dp(6), self.y + dp(6)
+            size: self.width - dp(12), self.height - dp(12)
+
+
+# ---------------------------------------------------------------- root
+
+<RootLayout>:
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba: app.theme.bg
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    ScreenManager:
+        id: sm
+    BottomNav:
+        id: nav
+        navigate: root.go
+        height: dp(66) if root.nav_visible else 0
+        opacity: 1 if root.nav_visible else 0
+        disabled: not root.nav_visible
+
+
+# ---------------------------------------------------------------- screens
+
+<HomeScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(20), dp(18), dp(20), dp(12)
+        spacing: dp(14)
+        BoxLayout:
+            size_hint_y: None
+            height: dp(40)
+            InfoPill:
+                icon: 'fire'
+                icon_color: app.theme.warning
+                label: root.streak_text
+            Widget:
+            InfoPill:
+                icon: 'timer-outline'
+                icon_color: app.theme.primary
+                label: root.focus_text
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: self.minimum_height
+            spacing: dp(2)
+            Text:
+                text: root.greeting
+                tone: 'muted'
+                font_size: '15sp'
+            ScreenTitle:
+                text: 'Ready to sprint?'
+        ScrollView:
+            size_hint_y: None
+            height: dp(236)
+            do_scroll_y: False
+            bar_width: 0
+            BoxLayout:
+                id: template_row
+                size_hint_x: None
+                width: self.minimum_width
+                spacing: dp(14)
+                padding: dp(4), dp(10), dp(4), dp(14)
+        BoxLayout:
+            size_hint_y: None
+            height: dp(28)
+            SectionTitle:
+                text: 'My Sprints'
+                size_hint_x: 1
+            Label:
+                text: root.count_text
+                color: app.theme.text_muted
+                font_size: '14sp'
+                size_hint_x: None
+                width: self.texture_size[0]
+        ScrollView:
+            bar_width: 0
+            BoxLayout:
+                id: sprint_list
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(12)
+                padding: dp(2), dp(4), dp(2), dp(16)
+        AppButton:
+            icon: 'plus'
+            label: 'New Sprint'
+            height: dp(56)
+            on_release: app.root.go('create')
+
+<CreateTaskScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(12), dp(14), dp(12), dp(16)
+        spacing: dp(6)
+        BoxLayout:
+            size_hint_y: None
+            height: dp(48)
+            spacing: dp(6)
+            IconButton:
+                icon: 'arrow-left'
+                on_release: app.root.go('home')
+            Text:
+                text: 'New Sprint'
+                bold: True
+                font_size: '22sp'
+                pos_hint: {'center_y': 0.5}
+        ScrollView:
+            bar_width: 0
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(8), dp(8), dp(8), dp(16)
+                spacing: dp(14)
+                Text:
+                    text: 'Name'
+                    tone: 'muted'
+                    bold: True
+                    font_size: '14sp'
+                AppTextInput:
+                    id: name_input
+                    hint_text: 'e.g. LeetCode practice'
+                    on_text: root.refresh_preview()
+                Text:
+                    text: 'Timing'
+                    tone: 'muted'
+                    bold: True
+                    font_size: '14sp'
+                Card:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: dp(16), dp(6)
+                    Stepper:
+                        id: total
+                        title: 'Total time'
+                        hint: 'minutes'
+                        value: 60
+                        step: 5
+                        minimum: 1
+                        maximum: 1440
+                        on_value: root.refresh_preview()
+                    Widget:
+                        size_hint_y: None
+                        height: dp(1)
+                        canvas:
+                            Color:
+                                rgba: app.theme.divider
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                    Stepper:
+                        id: work
+                        title: 'Sprint length'
+                        hint: 'minutes'
+                        value: 5
+                        step: 1
+                        minimum: 1
+                        maximum: 1440
+                        on_value: root.refresh_preview()
+                    Widget:
+                        size_hint_y: None
+                        height: dp(1)
+                        canvas:
+                            Color:
+                                rgba: app.theme.divider
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                    Stepper:
+                        id: rest
+                        title: 'Break'
+                        hint: 'seconds between sprints'
+                        value: 10
+                        step: 5
+                        minimum: 0
+                        maximum: 3600
+                        on_value: root.refresh_preview()
+                Card:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: dp(18), dp(16)
+                    spacing: dp(12)
+                    bg_color: app.theme.primary_soft
+                    elevation: 0
+                    Text:
+                        text: root.preview_title
+                        tone: 'primary'
+                        bold: True
+                        font_size: '18sp'
+                    Text:
+                        text: root.preview_detail
+                        font_size: '14sp'
+                    GridLayout:
+                        id: preview_pills
+                        cols: 12
+                        spacing: dp(5)
+                        size_hint_y: None
+                        height: self.minimum_height
+                        row_default_height: dp(8)
+                        row_force_default: True
+                Text:
+                    text: root.error
+                    tone: 'danger'
+                    font_size: '14sp'
+                    opacity: 1 if root.error else 0
+        BoxLayout:
+            size_hint_y: None
+            height: dp(124)
+            orientation: 'vertical'
+            padding: dp(8), dp(6), dp(8), 0
+            spacing: dp(10)
+            AppButton:
+                icon: 'check'
+                label: 'Save Sprint'
+                on_release: root.save()
+            AppButton:
+                label: 'Cancel'
+                style: 'soft'
+                on_release: app.root.go('home')
+
+<TimerScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(12), dp(14), dp(12), dp(28)
+        spacing: dp(10)
+        BoxLayout:
+            size_hint_y: None
+            height: dp(48)
+            IconButton:
+                icon: 'close'
+                on_release: root.ask_stop()
+            Label:
+                text: root.task_name
+                bold: True
+                font_size: '19sp'
+                color: app.theme.text
+                text_size: self.width, None
+                halign: 'center'
+                shorten: True
+                shorten_from: 'right'
+            Widget:
+                size_hint_x: None
+                width: dp(44)
+        Widget:
+            size_hint_y: 0.15
+        Label:
+            markup: True
+            text: root.phase_text
+            bold: True
+            font_size: '14sp'
+            color: root.phase_color
+            size_hint: None, None
+            size: self.texture_size[0] + dp(28), dp(34)
+            pos_hint: {'center_x': 0.5}
+            canvas.before:
+                Color:
+                    rgba: root.phase_color[:3] + [0.14]
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [self.height / 2]
+        RelativeLayout:
+            size_hint_y: None
+            height: min(dp(290), self.width * 0.8)
+            ProgressRing:
+                size_hint: None, None
+                size: self.parent.height, self.parent.height
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                progress: root.progress
+                ring_color: root.phase_color
+                track_color: app.theme.pending
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint: None, None
+                size: dp(220), dp(110)
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Label:
+                    text: root.time_text
+                    font_size: '62sp'
+                    bold: True
+                    color: app.theme.text
+                Label:
+                    text: root.sub_text
+                    font_size: '15sp'
+                    color: app.theme.text_muted
+                    size_hint_y: None
+                    height: dp(24)
+        Widget:
+            size_hint_y: 0.12
+        Text:
+            text: root.progress_text
+            tone: 'muted'
+            halign: 'center'
+            font_size: '14sp'
+        GridLayout:
+            id: pills
+            cols: 10
+            spacing: dp(6)
+            padding: dp(20), dp(4)
+            size_hint_y: None
+            height: self.minimum_height
+            row_default_height: dp(10)
+            row_force_default: True
+        Widget:
+        BoxLayout:
+            size_hint: None, None
+            size: dp(280), dp(88)
+            pos_hint: {'center_x': 0.5}
+            spacing: dp(30)
+            IconButton:
+                icon: 'stop'
+                style: 'danger_soft'
+                size: dp(62), dp(62)
+                pos_hint: {'center_y': 0.5}
+                on_release: root.ask_stop()
+            IconButton:
+                icon: 'pause' if root.running else 'play'
+                style: 'primary'
+                size: dp(88), dp(88)
+                font_size: '40sp'
+                on_release: root.toggle()
+            IconButton:
+                icon: 'skip-next'
+                style: 'soft'
+                size: dp(62), dp(62)
+                pos_hint: {'center_y': 0.5}
+                disabled: not root.started
+                opacity: 1 if root.started else 0.4
+                on_release: root.skip()
+
+<ExploreScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(20), dp(18), dp(20), 0
+        spacing: dp(12)
+        ScreenTitle:
+            text: 'Explore'
+        Text:
+            text: 'Ready-made sprints for every kind of work'
+            tone: 'muted'
+        ScrollView:
+            size_hint_y: None
+            height: dp(46)
+            do_scroll_y: False
+            bar_width: 0
+            BoxLayout:
+                id: filters
+                size_hint_x: None
+                width: self.minimum_width
+                spacing: dp(8)
+                padding: 0, dp(4)
+        ScrollView:
+            bar_width: 0
+            BoxLayout:
+                id: cards
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(16)
+                padding: dp(2), dp(6), dp(2), dp(20)
+
+<StatsScreen>:
+    ScrollView:
+        bar_width: 0
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: self.minimum_height
+            padding: dp(20), dp(18), dp(20), dp(20)
+            spacing: dp(14)
+            ScreenTitle:
+                text: 'Stats'
+            BoxLayout:
+                id: periods
+                size_hint_y: None
+                height: dp(38)
+                spacing: dp(8)
+            Card:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: dp(150)
+                padding: dp(22), dp(18)
+                radius: dp(24)
+                bg_color: app.theme.primary
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 0.12
+                    Ellipse:
+                        pos: self.right - dp(130), self.y + dp(14)
+                        size: dp(120), dp(120)
+                Text:
+                    text: 'Focus time'
+                    tone: 'inverse'
+                    font_size: '15sp'
+                    opacity: 0.85
+                Text:
+                    text: root.focus_value
+                    tone: 'inverse'
+                    bold: True
+                    font_size: '40sp'
+                Widget:
+                Text:
+                    text: root.focus_detail
+                    tone: 'inverse'
+                    font_size: '14sp'
+                    opacity: 0.85
+            GridLayout:
+                id: stat_grid
+                cols: 2
+                spacing: dp(12)
+                size_hint_y: None
+                height: self.minimum_height
+            SectionTitle:
+                text: 'Recent sessions'
+                padding: 0, dp(8), 0, 0
+            Card:
+                id: history
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(16), dp(6)
+
+<SettingsScreen>:
+    ScrollView:
+        bar_width: 0
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: self.minimum_height
+            padding: dp(20), dp(18), dp(20), dp(20)
+            spacing: dp(12)
+            ScreenTitle:
+                text: 'Settings'
+            Text:
+                text: 'APPEARANCE'
+                tone: 'muted'
+                bold: True
+                font_size: '13sp'
+                padding: 0, dp(8), 0, 0
+            Card:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(16), dp(8), dp(16), dp(16)
+                spacing: dp(6)
+                SettingRow:
+                    icon: 'theme-light-dark'
+                    title: 'Theme'
+                BoxLayout:
+                    id: theme_chips
+                    size_hint_y: None
+                    height: dp(38)
+                    spacing: dp(8)
+                SettingRow:
+                    icon: 'palette'
+                    title: 'Accent colour'
+                BoxLayout:
+                    id: accent_row
+                    size_hint_y: None
+                    height: dp(40)
+                    spacing: dp(10)
+            Text:
+                text: 'TIMER'
+                tone: 'muted'
+                bold: True
+                font_size: '13sp'
+                padding: 0, dp(8), 0, 0
+            Card:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(16), dp(4)
+                SettingRow:
+                    icon: 'volume-high'
+                    title: 'Alarm sound'
+                    Toggle:
+                        id: sound_toggle
+                        pos_hint: {'center_y': 0.5}
+                        on_active: app.set_pref('sound', self.active)
+                SettingRow:
+                    icon: 'vibrate'
+                    title: 'Vibrate'
+                    Toggle:
+                        id: vibrate_toggle
+                        pos_hint: {'center_y': 0.5}
+                        on_active: app.set_pref('vibrate', self.active)
+            Text:
+                text: 'SprintRunner ' + app.version_name
+                tone: 'muted'
+                halign: 'center'
+                font_size: '13sp'
+                padding: 0, dp(16)

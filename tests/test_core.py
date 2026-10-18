@@ -116,6 +116,15 @@ def test_skip_moves_to_next_block_and_counts_partial_focus():
     assert timer.completed_work_blocks == 0
 
 
+def test_focus_so_far_includes_current_sprint():
+    timer, clock = make_timer(total=11, work=5, rest=30)
+    timer.start()
+    clock.advance(330 + 45)  # sprint 1 + break + 45s of sprint 2
+    timer.tick()
+    assert timer.focused_seconds == 300
+    assert timer.focus_so_far() == 345
+
+
 def test_start_with_empty_schedule_returns_false():
     timer = Timer(Schedule(Task("t", 1, 0)))
     assert timer.start() is False

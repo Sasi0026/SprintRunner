@@ -111,6 +111,12 @@ class Timer:
         self._block_end_time = self.clock() + self.remaining_seconds
         self.is_paused = False
 
+    def focus_so_far(self):
+        """Focused seconds including the part of the current sprint done so far."""
+        if self.is_running and self.current_block.block_type == 'work':
+            return self.focused_seconds + int(self.current_block.duration_seconds - self._remaining_exact())
+        return self.focused_seconds
+
     @property
     def is_finished(self):
         return not self.is_running and self.current_block is None and self._block_end_time is not None

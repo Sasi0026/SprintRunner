@@ -13,10 +13,18 @@ The core engine and UI have been successfully compiled into a standalone Android
 ## 📱 Screenshots
 
 <p align="center">
-  <img src="screenshots/home.jpg" width="250" />
-  <img src="screenshots/create.jpg" width="250" />
-  <img src="screenshots/timer.jpg" width="250" />
-  
+  <img src="screenshots/home.jpg" width="200" />
+  <img src="screenshots/explore.jpg" width="200" />
+  <img src="screenshots/create.jpg" width="200" />
+  <img src="screenshots/timer.jpg" width="200" />
+</p>
+
+**Dark theme**
+
+<p align="center">
+  <img src="screenshots/home_dark.jpg" width="200" />
+  <img src="screenshots/stats_dark.jpg" width="200" />
+  <img src="screenshots/settings_dark.jpg" width="200" />
 </p>
 
 ## ✨ Features
@@ -24,10 +32,12 @@ The core engine and UI have been successfully compiled into a standalone Android
 - ✅ **Customizable Time Blocks** - Set your own work duration (e.g., 5 min per coding problem)
 - ✅ **Smart Break System** - Automatic breaks between work blocks (e.g., 10 sec rest)
 - ✅ **Reusable Templates** - Save timer configurations and reuse them daily
-- ✅ **Visual Progress** - Modern pill-shaped progress bars show completed/active/pending blocks
-- ✅ **Dual Alarm Tones** - Different sounds for work vs break blocks
-- ✅ **Task Management** - Create, save, and delete custom timers
-- ✅ **Long-press Delete** - Hold task cards to delete them
+- ✅ **Visual Progress** - Progress ring plus pill bars for completed/active/pending sprints
+- ✅ **Ready-made Templates** - Coding, Pomodoro, exam practice, workouts, reading and more
+- ✅ **Stats & Streaks** - Focus time, sprints done, daily streaks and recent sessions
+- ✅ **Light, Dark & System Themes** - Plus five accent colours
+- ✅ **Dual Alarm Tones + Vibration** - Different sounds for work vs break blocks (can be turned off)
+- ✅ **Accurate Background Timing** - Uses the real clock, so it catches up after the app was in the background
 
 ## 🎯 Use Case Example
 
@@ -46,20 +56,24 @@ The core engine and UI have been successfully compiled into a standalone Android
 ## 🛠️ Tech Stack
 
 - **Language:** Python 3.10+
-- **GUI Framework:** Kivy 2.2.1
+- **GUI Framework:** Kivy 2.3.0 (layout in `src/ui/sprintrunner.kv`)
+- **Icons:** Material Design Icons font
 - **Data Storage:** JSON (for timer configurations)
 - **Audio:** Kivy SoundLoader
 - **Architecture:** Object-Oriented Programming (OOP)
 
 **Dependencies:**
-- kivy==2.2.1
+- kivy==2.3.0
 
 ### Core OOP Classes:
 - `Task` - Timer configuration
 - `Schedule` - Generates work/break blocks
-- `Timer` - Countdown logic
+- `Timer` - Countdown logic (wall-clock based: pause, resume, skip)
 - `TimerRepository` - Save/load functionality
-- `HomeScreen`, `CreateTaskScreen`, `TimerScreen` - UI screens
+- `SessionLog` - Session history, stats and streaks
+- `Settings` - Theme, accent colour, sound and vibration preferences
+- `Theme` - Light/dark colour palettes used by every widget
+- `HomeScreen`, `ExploreScreen`, `CreateTaskScreen`, `TimerScreen`, `StatsScreen`, `SettingsScreen` - UI screens
 
 ## 📲 Installation
 
@@ -84,14 +98,22 @@ pip install -r requirements.txt
 
 # Run locally
 python main.py
+
+# Run the tests
+pip install pytest
+python -m pytest tests
 ```
 
 ### Build Android APK with GitHub Actions
 
 1. Fork this repository
-2. Push changes to `main` branch
-3. Go to Actions tab → Build Android APK
+2. Push changes to `main` branch (README/screenshot-only changes don't trigger a build)
+3. Go to Actions tab → Build SprintRunner APK (or run it manually with "Run workflow")
 4. Download APK from Artifacts
+
+The Android toolchain is pinned in `buildozer.spec` (`p4a.branch`, `kivy` version) and
+`build.yml` (`buildozer`, `Cython`). Upgrade them together; an unpinned python-for-android
+breaks the build whenever its `master` branch changes.
 
 ## 🚀 Roadmap
 
@@ -100,10 +122,10 @@ Sprint Runner is actively developed. Upcoming versions will introduce AI agent f
 ### Planned Features
 
 - [ ] **Background Service** - Timer continues when app is minimized or screen is off
-- [ ] **Enhanced UI** - Display session stats (blocks completed, remaining time)
-- [ ] **Statistics Dashboard** - Track productivity over time
+- [x] **Enhanced UI** - Display session stats (blocks completed, remaining time)
+- [x] **Statistics Dashboard** - Track productivity over time
 - [ ] **Notification Support** - Show timer updates in notification bar
-- [ ] **Dark/Light Themes** - Customizable color schemes
+- [x] **Dark/Light Themes** - Customizable color schemes
 - [ ] **Export/Import** - Share timer configs with others
 - [ ] **Voice Command Support** - Control sprints and timers hands-free using voice input
 
@@ -125,21 +147,27 @@ Sprint Runner is actively developed. Upcoming versions will introduce AI agent f
 
 ## 📸 Current Features
 
-**Home Screen:**
-- View all saved timers
-- Tap `+` to create new timer
-- Long-press task cards to delete
+**Home:**
+- Streak and today's focus time at the top
+- Swipeable template cards - tap Start to run one straight away
+- Your saved sprints - tap to start, trash icon to delete (with confirmation)
 
-**Create Task Screen:**
-- Task name
-- Total duration (minutes)
-- Work block duration (minutes)
-- Break duration (seconds, default: 10)
+**Explore:**
+- All templates with descriptions, filterable by category (Students, Developers, Fitness...)
+- Start a template or save it to your sprints
 
-**Timer Screen:**
-- Real-time countdown
-- Visual progress bars (orange = completed, green = active, gray = pending)
-- Start/Pause/Resume/Stop controls
+**New Sprint:**
+- Name, total time, sprint length and break, with +/- steppers
+- Live preview of how many sprints fit, with clear error messages
+
+**Timer:**
+- Progress ring and big countdown, sprint counter, pill progress bar
+  (green = done, accent = current, grey = pending)
+- Play/Pause, Skip and Stop (asks before ending; progress is still saved)
+
+**Stats:** focus time, sprints done, sessions finished and streaks for today / this week / all time, plus recent sessions
+
+**Settings:** Light / Dark / System theme, accent colour, alarm sound and vibration
 
 ## 🤝 Contributing
 
