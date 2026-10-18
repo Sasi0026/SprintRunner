@@ -13,22 +13,22 @@ package.domain = org.sasi
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,mp3,wav
+source.include_exts = py,png,jpg,kv,atlas,mp3,wav,ttf
 
 # (list) List of inclusions using pattern matching
-source.include_patterns = assets/*.mp3,assets/*.wav
+source.include_patterns = assets/*.mp3,assets/*.wav,assets/fonts/*.ttf
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
 
 # (list) List of directory to exclude (let empty to not exclude anything)
-#source.exclude_dirs = tests, bin, venv
+source.exclude_dirs = tests, bin, venv, screenshots, .github
 
 # (list) List of exclusions using pattern matching
 # Do not prefix with './'
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.1
+version = 0.2
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -36,7 +36,9 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy==2.2.1,pyjnius
+# Kivy 2.3.0 is the version the pinned p4a release (p4a.branch below) was
+# tested with. Upgrade kivy and p4a.branch together.
+requirements = python3,kivy==2.3.0,pyjnius
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -100,7 +102,7 @@ android.permissions =INTERNET,VIBRATE,WAKE_LOCK
 #android.features = android.hardware.usb.host
 
 # (int) Target Android API, should be as high as possible.
-android.api = 31
+android.api = 33
 
 # (int) Minimum API your APK / AAB will support.
 android.minapi = 26
@@ -109,7 +111,7 @@ android.minapi = 26
 #android.sdk = 20
 
 # (str) Android NDK version to use
-#android.ndk = 23b
+android.ndk = 25b
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
 #android.ndk_api = 21
@@ -320,7 +322,9 @@ android.allow_backup = True
 #p4a.fork = kivy
 
 # (str) python-for-android branch to use, defaults to master
-#p4a.branch = master
+# Pinned: an unpinned p4a follows `master`, which moved to Python 3.14 /
+# Kivy 2.3.1 in 2026 and broke builds without any change in this repo.
+p4a.branch = v2024.01.21
 
 # (str) python-for-android specific commit to use, defaults to HEAD, must be within p4a.branch
 #p4a.commit = HEAD
